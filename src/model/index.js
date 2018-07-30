@@ -26,11 +26,28 @@ window.renderModalEmailVerified = (containerModal) => {
         </div>
     </div>`, document.getElementById('close-modal-welcome').addEventListener('click', () => containerModal.innerHTML = '');
 };
+window.renderModalEmailRepeated = (containerModal) => {
+  containerModal.innerHTML =
+    `
+	        <div id="modal-welcome" class="modal">
+            <div class="modal-content">
+            <div class="modal-header">
+                <span id="close-modal-welcome"  class="close">&times;</span>
+                <h2> Bienvenido a EDU TIC </h2>
+             </div>
+           <p class="welcomeUser">¡Hola !</p>
+             <div class="modal-body">
+             <p>este correo ya está registrado </p>
+             </div>
+            
+        </div>
+    </div>`, document.getElementById('close-modal-welcome').addEventListener('click', () => containerModal.innerHTML = '');
+};
 /* *******************************************REGISTRO ORDINARIO DEL USUARIO****************************** */
 window.registerUserFirebase = (email, password, name, errorName, errorEmail, errorPassword) => {
-  let elmet = ''; // register()
-  let modal = document.getElementById('mi-modal');
-  modal.classList.add('modalView');
+  // let elmet = ''; // register()
+  // let modal = document.getElementById('mi-modal');
+  // modal.classList.add('modalView');
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((result) => {
       window.sendEmailVerification();
@@ -40,15 +57,14 @@ window.registerUserFirebase = (email, password, name, errorName, errorEmail, err
       errorEmail.innerHTML = '';
       errorPassword.innerHTML = '';
       document.getElementById('form-registro').reset();
-    }).catch((error) => {
-      let errorCode = error.code;
-      let errorMessage = error.message;
-      alert(errorCode, errorMessage);
-      elmet = window.modalView('REGISTRO','La dirección de correo electrónico ya está registrada.','Aceptar','Aceptar')
-      modal.innerHTML = elmet;
-      console.log(elmet);
-      let register = document.getElementById('accept');
-      register.style.display = 'none';
+    }).catch(() => {
+      window.renderModalEmailRepeated(document.getElementById('container-modal'));
+      // alert(errorCode, errorMessage);
+      // elmet = window.modalView('REGISTRO','La dirección de correo electrónico ya está registrada.','Aceptar','Aceptar')
+      // modal.innerHTML = elmet;
+      // console.log(elmet);
+      // let register = document.getElementById('accept');
+      // register.style.display = 'none';
     });
 };
 /* ***********************************************************Envia correo de confirmación****************************************************************************/
@@ -116,9 +132,6 @@ const createUserInBd = (objectUser, name) => {
   }
   return objectUser;
 };
-
-
-
 /* *********************************************Registro con Facebook******************************** */
 window.registerUserFacebook = () => {
   const provider = new firebase.auth.FacebookAuthProvider();
@@ -150,7 +163,7 @@ window.initSessionFirebase = (emailLogin, passwordLogin) => {
   firebase.auth().signInWithEmailAndPassword(emailLogin.value, passwordLogin.value).then(() => {
     document.getElementById('form-sesion').reset();
     document.getElementById('div-label-msj-error-password-login').innerHTML = '';
-  }).catch((error) => {
+  }).catch(() => {
     document.getElementById('div-label-msj-error-password-login').innerHTML = '<em>Asegurate que el correo y contraseña sean correctos.</em>';
   });
 };
@@ -168,7 +181,7 @@ window.modalView = (reftexto, text, btn1, btn2) => {
   `;
 };
 
-/*Recuperar contraseña */
+/* Recuperar contraseña */
 window.recoverPassword = () => {
   const auth = firebase.auth();
   const emailAddress = document.getElementById('email-session').value;
@@ -183,7 +196,7 @@ window.recoverPassword = () => {
       accept.addEventListener('click', () => {
         window.location.href = 'https://outlook.live.com/owa/#';
       });
-    }).catch((error) =>{
+    }).catch(() =>{
       elmet = window.modalView('Recuperar Contraseña', 'No se encuentra en nuestros registros', 'Registrarse', 'Cerrar');
       modal.innerHTML = elmet;
       let register = document.getElementById('accept');
